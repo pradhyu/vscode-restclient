@@ -39,6 +39,14 @@ export class HttpRequestParser implements RequestParser {
         let currentLine: string | undefined;
         while ((currentLine = lines.shift()) !== undefined) {
             const nextLine = lines[0];
+            // in case we know where to send a json file got// may be define default somewhere else
+            // make things work in plain json using env variables
+            if (currentLine == "{") {
+                state=ParseState.Body;
+                requestLines.push("POST http://{{host}}:{{port}}/{{version}}?trace={{trace}}&profile={{profile}}");
+                headersLines.push("content-type: application/json");
+
+            }
             switch (state) {
                 case ParseState.URL:
                     requestLines.push(currentLine.trim());
